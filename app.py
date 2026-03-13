@@ -54,30 +54,30 @@ CLAVE_DIRECTOR = "Director2026+"
 CLAVE_ADMIN = "Sercom2026+"
 
 ACCESOS_CVS = {
-    "COPACABANA": "copa20*",
-    "BARBOSA": "barbosa20+",
+    "COPACABANA": "comicopa2026*",
+    "BARBOSA": "bosa2026+",
     "CAUCASIA": "cvscaucasia2026/",
     "CIUDAD BOLIVAR": "bolivar2020+",
     "DABEIBA": "dabeiba2020+",
     "DON MATIAS": "cvsmatias2026*",
     "EL BAGRE": "bagre2021*",
     "FRONTINO": "frontino2026+",
-    "LA ESTRELLA": "estrella20+",
+    "LA ESTRELLA": "cvsestrella2026ser*",
     "NECHI": "cvssernechi2026+",
-    "PRADO": "prado20*",
+    "PRADO": "cvsprado2026*",
     "SEGOVIA": "sersegovia2026+",
     "YARUMAL": "cvsyarumal2026+",
     "ZARAGOZA": "zaragozaser2020+",
-    "BELLO": "bello123+",
-    "ENVIGADO": "envigado20+",
-    "ITAGUI": "itagui2026+",
-    "CALDAS": "caldas20+",
-    "JUNIN": "junin2026+",
-    "SABANETA": "sabaneta2020+",
-    "TERMINAL NORTE": "norte2026*",
+    "BELLO": "cvsbello456*",
+    "ENVIGADO": "envigado1234+",
+    "ITAGUI": "sertagui44/",
+    "CALDAS": "sercaldas2025+",
+    "JUNIN": "cvscentro2025+",
+    "SABANETA": "sabaneta19092+",
+    "TERMINAL NORTE": "norte11+",
     "GENERAL": "Todos12345+",
     "NUMERARIO": "numerario2026+",
-    "GIRARDOTA": "girardota20+",
+    "GIRARDOTA": "Girardota1111+",
 
 }
 
@@ -507,6 +507,13 @@ def construir_tabla_productos(df_vendedor, maestro, df_cvs, rol):
 
     tabla = pd.DataFrame(filas)
 
+
+    # Orden fijo de productos
+    orden_productos = [ "POSTPAGO", "HOGAR", "TERMINALES", "OTROS", "CVS PLUS" ]
+
+    tabla["Producto"] = pd.Categorical(tabla["Producto"], categories=orden_productos, ordered=True)
+    tabla = tabla.sort_values("Producto")
+
     return tabla
 
 
@@ -643,7 +650,7 @@ with tab2:
                 and x["Nombre"] == nombre_lider
                 and x["Producto"] == r["Producto"]
             ),
-            ("Pago 100%", "")
+            ("Sin pago (0%)", "")
         ),
         axis=1,
         result_type="expand"
@@ -739,7 +746,7 @@ with tab2:
                         and x["Nombre"] == nombre
                         and x["Producto"] == r["Producto"]
                     ),
-                    ("Pago 100%", "")
+                    ("Sin pago (0%)", "")
                 ),
                 axis=1,
                 result_type="expand"
