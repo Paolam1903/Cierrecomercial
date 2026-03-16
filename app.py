@@ -54,30 +54,31 @@ CLAVE_DIRECTOR = "Director2026+"
 CLAVE_ADMIN = "Sercom2026+"
 
 ACCESOS_CVS = {
-    "COPACABANA": "comicopa2026*",
-    "BARBOSA": "bosa2026+",
+    "COPACABANA": "copa20*",
+    "BARBOSA": "barbosa20+",
     "CAUCASIA": "cvscaucasia2026/",
     "CIUDAD BOLIVAR": "bolivar2020+",
     "DABEIBA": "dabeiba2020+",
     "DON MATIAS": "cvsmatias2026*",
     "EL BAGRE": "bagre2021*",
     "FRONTINO": "frontino2026+",
-    "LA ESTRELLA": "cvsestrella2026ser*",
+    "LA ESTRELLA": "estrella20+",
     "NECHI": "cvssernechi2026+",
-    "PRADO": "cvsprado2026*",
+    "PRADO": "prado20*",
     "SEGOVIA": "sersegovia2026+",
     "YARUMAL": "cvsyarumal2026+",
     "ZARAGOZA": "zaragozaser2020+",
-    "BELLO": "cvsbello456*",
-    "ENVIGADO": "envigado1234+",
-    "ITAGUI": "sertagui44/",
-    "CALDAS": "sercaldas2025+",
-    "JUNIN": "cvscentro2025+",
-    "SABANETA": "sabaneta19092+",
-    "TERMINAL NORTE": "norte11+",
+    "BELLO": "bello123+",
+    "ENVIGADO": "envigado20+",
+    "ITAGUI": "itagui2026+",
+    "CALDAS": "caldas20+",
+    "JUNIN": "junin2026+",
+    "SABANETA": "sabaneta2020+",
+    "TERMINAL NORTE": "norte2026*",
     "GENERAL": "Todos12345+",
     "NUMERARIO": "numerario2026+",
-    "GIRARDOTA": "Girardota1111+",
+    "GIRARDOTA": "girardota20+",
+
 
 }
 
