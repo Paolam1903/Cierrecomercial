@@ -789,13 +789,30 @@ with tab2:
                 else:
                     acc_valor = st.session_state.get(f"acc_{cvs_sel}_{nombre}", 100)
 
-
-
                 tabla["ACC"] = acc_valor
+
+                # =========================
+                # 🔴 NUEVO: KPI DE PUNTOS
+                # =========================
+                df_persona = df_f[
+                    (df_f["Sucursal"] == cvs_sel) &
+                    (df_f["Nombre_Vendedor"] == nombre)
+                ]
+
+                # Calcular KPI (YA TIENES ESTA FUNCIÓN)
+                meta_kpi, ejec_kpi, pct_kpi = calcular_kpi_puntos(df_cvs, df_persona, rol)
+
+                tabla["Meta_KPI"] = int(meta_kpi)
+                tabla["Ejecutado_KPI"] = int(ejec_kpi)
+                tabla["KPI_Puntos_%"] = round(pct_kpi, 1)
+
                 tablas_con_acc.append(tabla)
 
             nuevas_decisiones = pd.concat(tablas_con_acc, ignore_index=True)
 
+            # =========================
+            # 🔴 NO BORRA HISTÓRICO → SOLO ACTUALIZA MES + CVS
+            # =========================
             if RUTA_HISTORICO.exists():
                 df_historico = pd.read_excel(RUTA_HISTORICO, engine="openpyxl")
             else:
@@ -807,6 +824,8 @@ with tab2:
             )]
 
             df_historico = pd.concat([df_historico, nuevas_decisiones], ignore_index=True)
+
+            # 🔴 IMPORTANTE: NO SE PIERDEN COLUMNAS ANTERIORES
             df_historico.to_excel(RUTA_HISTORICO, index=False)
 
             # Actualizar session_state
