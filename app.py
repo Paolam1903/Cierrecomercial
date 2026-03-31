@@ -563,6 +563,7 @@ with st.sidebar:
 # =======================
 # TAB 2
 # =======================
+
 with tab2:
     st.subheader("📍 Detalle por CVS")
 
@@ -588,7 +589,6 @@ with tab2:
 
         st.metric("🎯 KPI Puntos", f"{int(ejec_p)} / {int(meta_p)}", f"{pct_p}%")
 
-        # 🔴 TABLA LÍDER
         tabla_lider = construir_tabla_productos(df_lider, maestro, df_cvs, "LIDER")
 
         tabla_lider["Nombre"] = nombre_lider
@@ -596,7 +596,6 @@ with tab2:
         tabla_lider["CVS"] = cvs_sel
         tabla_lider["Mes"] = mes_sel
 
-        # 🔴 TRAER HISTÓRICO
         tabla_lider[["Tipo Pago Comisión", "Observación"]] = tabla_lider.apply(
             lambda r: next(
                 (
@@ -630,99 +629,31 @@ with tab2:
 
         tablas_guardar.append(tabla_lider)
 
-# =====================
-# ASESORES (NORMALES)
-# =====================
-st.markdown("## 👥 Asesoras")
+    # =====================
+    # ASESORES (NORMALES)
+    # =====================
+    st.markdown("## 👥 Asesoras")
 
-df_asesores = df_cvs[
-    (df_cvs["Rol"] == "ASESOR") &
-    (~df_cvs["Nombre_Vendedor"].isin(SUPERNUMERARIOS))
-]
+    df_asesores = df_cvs[
+        (df_cvs["Rol"] == "ASESOR") &
+        (~df_cvs["Nombre_Vendedor"].isin(SUPERNUMERARIOS))
+    ]
 
-for nombre, g in df_asesores.groupby("Nombre_Vendedor"):
+    for nombre, g in df_asesores.groupby("Nombre_Vendedor"):
 
-    with st.expander(f"👤 {nombre}"):
+        with st.expander(f"👤 {nombre}"):
 
-        meta_p, ejec_p, pct_p = calcular_kpi_puntos(df_cvs, g, "ASESOR")
+            meta_p, ejec_p, pct_p = calcular_kpi_puntos(df_cvs, g, "ASESOR")
 
-        st.metric("🎯 KPI Puntos", f"{int(ejec_p)} / {int(meta_p)}", f"{pct_p}%")
+            st.metric("🎯 KPI Puntos", f"{int(ejec_p)} / {int(meta_p)}", f"{pct_p}%")
 
-        # 🔴 TABLA PRODUCTOS
-        tabla = construir_tabla_productos(g, maestro, df_cvs, "ASESOR")
-
-        tabla["Nombre"] = nombre
-        tabla["Rol"] = "ASESOR"
-        tabla["CVS"] = cvs_sel
-        tabla["Mes"] = mes_sel
-
-        # 🔴 TRAER HISTÓRICO
-        tabla[["Tipo Pago Comisión", "Observación"]] = tabla.apply(
-            lambda r: next(
-                (
-                    (x["Tipo Pago Comisión"], x["Observación"])
-                    for x in st.session_state["historico_decisiones"]
-                    if x["Mes"] == mes_sel
-                    and x["CVS"] == cvs_sel
-                    and x["Nombre"] == nombre
-                    and x["Producto"] == r["Producto"]
-                ),
-                ("Sin pago (0%)", "")
-            ),
-            axis=1,
-            result_type="expand"
-        )
-
-        tabla["Observación"] = tabla["Observación"].fillna("").astype(str)
-
-        tabla = st.data_editor(
-            tabla,
-            column_config={
-                "Tipo Pago Comisión": st.column_config.SelectboxColumn(
-                    options=["Pago 100%", "Pago 90%", "Sin pago (0%)"]
-                ),
-                "Observación": st.column_config.TextColumn(width="large")
-            },
-            disabled=not es_director,
-            use_container_width=True,
-            key=f"editor_{nombre}"
-        )
-
-        tablas_guardar.append(tabla)
-
-
-# =====================
-# SUPERNUMERARIOS
-# =====================
-df_supernumerarios = df_cvs[
-    (df_cvs["Rol"] == "ASESOR") &
-    (df_cvs["Nombre_Vendedor"].isin(SUPERNUMERARIOS))
-]
-
-if not df_supernumerarios.empty:
-
-    st.divider()
-    st.markdown("## 🟡 Supernumerarios (Apoyo temporal)")
-
-    for nombre, g in df_supernumerarios.groupby("Nombre_Vendedor"):
-
-        with st.expander(f"🟡 {nombre} (Supernumerario)"):
-
-            ejec_p = g["Puntos"].sum()
-
-            st.metric("🎯 KPI Puntos", f"{int(ejec_p)} / 0", "No aplica")
-
-            st.warning("No afecta KPI ni metas del CVS")
-
-            # 🔴 TABLA PRODUCTOS
             tabla = construir_tabla_productos(g, maestro, df_cvs, "ASESOR")
 
             tabla["Nombre"] = nombre
-            tabla["Rol"] = "SUPERNUMERARIO"
+            tabla["Rol"] = "ASESOR"
             tabla["CVS"] = cvs_sel
             tabla["Mes"] = mes_sel
 
-            # 🔴 TRAER HISTÓRICO (IGUAL QUE ASESORES)
             tabla[["Tipo Pago Comisión", "Observación"]] = tabla.apply(
                 lambda r: next(
                     (
@@ -741,7 +672,6 @@ if not df_supernumerarios.empty:
 
             tabla["Observación"] = tabla["Observación"].fillna("").astype(str)
 
-            # 🔴 EDITABLE (CLAVE)
             tabla = st.data_editor(
                 tabla,
                 column_config={
@@ -752,15 +682,79 @@ if not df_supernumerarios.empty:
                 },
                 disabled=not es_director,
                 use_container_width=True,
-                key=f"editor_super_{nombre}"
+                key=f"editor_{nombre}"
             )
 
             tablas_guardar.append(tabla)
 
+    # =====================
+    # SUPERNUMERARIOS
+    # =====================
+    df_supernumerarios = df_cvs[
+        (df_cvs["Rol"] == "ASESOR") &
+        (df_cvs["Nombre_Vendedor"].isin(SUPERNUMERARIOS))
+    ]
+
+    if not df_supernumerarios.empty:
+
+        st.divider()
+        st.markdown("## 🟡 Supernumerarios (Apoyo temporal)")
+
+        for nombre, g in df_supernumerarios.groupby("Nombre_Vendedor"):
+
+            with st.expander(f"🟡 {nombre} (Supernumerario)"):
+
+                ejec_p = g["Puntos"].sum()
+
+                st.metric("🎯 KPI Puntos", f"{int(ejec_p)} / 0", "No aplica")
+
+                st.warning("No afecta KPI ni metas del CVS")
+
+                tabla = construir_tabla_productos(g, maestro, df_cvs, "ASESOR")
+
+                tabla["Nombre"] = nombre
+                tabla["Rol"] = "SUPERNUMERARIO"
+                tabla["CVS"] = cvs_sel
+                tabla["Mes"] = mes_sel
+
+                tabla[["Tipo Pago Comisión", "Observación"]] = tabla.apply(
+                    lambda r: next(
+                        (
+                            (x["Tipo Pago Comisión"], x["Observación"])
+                            for x in st.session_state["historico_decisiones"]
+                            if x["Mes"] == mes_sel
+                            and x["CVS"] == cvs_sel
+                            and x["Nombre"] == nombre
+                            and x["Producto"] == r["Producto"]
+                        ),
+                        ("Sin pago (0%)", "")
+                    ),
+                    axis=1,
+                    result_type="expand"
+                )
+
+                tabla["Observación"] = tabla["Observación"].fillna("").astype(str)
+
+                tabla = st.data_editor(
+                    tabla,
+                    column_config={
+                        "Tipo Pago Comisión": st.column_config.SelectboxColumn(
+                            options=["Pago 100%", "Pago 90%", "Sin pago (0%)"]
+                        ),
+                        "Observación": st.column_config.TextColumn(width="large")
+                    },
+                    disabled=not es_director,
+                    use_container_width=True,
+                    key=f"editor_super_{nombre}"
+                )
+
+                tablas_guardar.append(tabla)
 
     # =====================
-    # GUARDAR HISTÓRICO
+    # 🔴 GUARDAR HISTÓRICO (CORREGIDO)
     # =====================
+    st.divider()
+
     if es_director and st.button("💾 Guardar decisiones del CVS"):
 
         tablas_con_acc = []
@@ -772,7 +766,6 @@ if not df_supernumerarios.empty:
             rol = tabla["Rol"].iloc[0]
 
             acc_valor = st.session_state.get(f"acc_{cvs_sel}_{nombre}", 100)
-
             tabla["ACC"] = acc_valor
 
             df_persona = df_f[
@@ -809,33 +802,31 @@ if not df_supernumerarios.empty:
 
         st.success("✅ Guardado correctamente")
 
-# =====================
-# DESCARGAR HISTÓRICO DEL MES
-# =====================
-st.divider()
-st.subheader("📊 Descargar histórico")
+    # =====================
+    # DESCARGAR HISTÓRICO
+    # =====================
+    st.subheader("📊 Descargar histórico")
 
-if st.button("📥 Descargar histórico del mes"):
+    if st.button("📥 Descargar histórico del mes"):
 
-    df_hist = pd.DataFrame(st.session_state.get("historico_decisiones", []))
+        df_hist = pd.DataFrame(st.session_state.get("historico_decisiones", []))
+        df_hist = df_hist[df_hist["Mes"] == mes_sel]
 
-    # Filtrar por mes seleccionado
-    df_hist = df_hist[df_hist["Mes"] == mes_sel]
+        if not df_hist.empty:
 
-    if not df_hist.empty:
+            archivo_mes = DATA_DIR / f"Historico_Comisiones_{mes_sel}.xlsx"
+            df_hist.to_excel(archivo_mes, index=False)
 
-        archivo_mes = DATA_DIR / f"Historico_Comisiones_{mes_sel}.xlsx"
-        df_hist.to_excel(archivo_mes, index=False)
+            with open(archivo_mes, "rb") as f:
+                st.download_button(
+                    label="⬇️ Descargar Excel",
+                    data=f,
+                    file_name=f"Historico_Comisiones_{mes_sel}.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        else:
+            st.warning("⚠️ No hay datos para este mes")
 
-        with open(archivo_mes, "rb") as f:
-            st.download_button(
-                label="⬇️ Descargar Excel",
-                data=f,
-                file_name=f"Historico_Comisiones_{mes_sel}.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-    else:
-        st.warning("⚠️ No hay datos para este mes")
 
 # =======================
 # TAB 3 – CUMPLIMIENTO GENERAL COORDINADOR Y SUPERVISORA
