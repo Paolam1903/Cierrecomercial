@@ -33,7 +33,7 @@ if not RUTA_LIQ.exists() or not RUTA_METAS.exists():
 # =============================
 st.markdown("""
 <div style="background-color:#E30613;padding:15px;border-radius:10px">
-<h1 style="color:white;text-align:center">📊 Dashboard Cierre Comercial – CVS 2026</h1>
+<h1 style="color:white;text-align:center">📊 Dashboard Cierre Comercial final – CVS de marzo 2026</h1>
 </div>
 """, unsafe_allow_html=True)
 
